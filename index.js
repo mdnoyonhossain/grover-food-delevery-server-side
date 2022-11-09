@@ -93,7 +93,7 @@ async function run() {
 
     })
 
-    app.post('/reviews', verifyJWT, async (req, res) => {
+    app.post('/reviews',  async (req, res) => {
       const order = req.body;
       const result = await reviewsCollection.insertOne(order);
       res.send(result)
