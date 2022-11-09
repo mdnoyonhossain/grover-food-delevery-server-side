@@ -21,12 +21,19 @@ async function run() {
     const servicesCollection = client.db('Grover').collection('services');
     const reviewsCollection = client.db('Grover').collection('orders')
 
+    app.post('/jwt', (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN, {expiresIn: '1d'});
+      res.send({token})
+    })
+
     app.get('/services', async (req, res) => {
       const query = {};
       const cursor = servicesCollection.find(query);
       const result = await cursor.toArray()
       res.send(result)
     });
+
     app.get('/delevary', async (req, res) => {
       const query = {};
       const cursor = servicesCollection.find(query);
@@ -61,11 +68,36 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/reviews/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const users = await reviewsCollection.findOne(query);
+      res.send(users)
+
+  })
+
     app.post('/reviews', async (req, res) =>{
       const order = req.body;
       const result = await reviewsCollection.insertOne(order);
       res.send(result)
     })
+
+    app.put('/reviews/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = {_id: ObjectId(id)};
+      const user = req.body;
+      const option = {upsert: true};
+      const updatedUser = { 
+          $set: {
+              email: user.email,
+              name: user.name,
+              phone: user.phone,
+              rating: user.rating
+          }
+      }
+      const result = await reviewsCollection.updateOne(filter, updatedUser, option);
+      res.send(result)
+  })
 
     app.delete('/reviews/:id', async (req, res) => {
       const id = req.params.id;
