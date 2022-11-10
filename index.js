@@ -72,7 +72,7 @@ async function run() {
 
     // order API 
 
-    app.get('/reviews', async (req, res) => {
+    app.get('/reviews', verifyJWT, async (req, res) => {
             
       let query = {};
       if (req.query.email) {
