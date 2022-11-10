@@ -106,7 +106,7 @@ async function run() {
       const option = { upsert: true };
       const updatedUser = {
         $set: {
-          email: user.email,
+          email: email,
           name: user.name,
           phone: user.phone,
           rating: user.rating
